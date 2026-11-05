@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Merlin 1D — Hand Control</title>
+    <meta name="description" content="Turn, spin, catch and zoom a Merlin 1D rocket engine with your hands through your webcam." />
+    <meta name="theme-color" content="#03070c" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2303070c'/%3E%3Cpath d='M11 6h10l-1 6h-8zM12 12h8l3 14H9z' fill='none' stroke='%2366d9ff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://storage.googleapis.com" crossorigin />
+    <link rel="preload" href="./poster.webp" as="image" fetchpriority="high" />
+    <link rel="preload" href="./fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.min.js",
+          "three/addons/": "./vendor/three/addons/"
+        }
+      }
+    </script>
+    <link rel="modulepreload" href="./src/main.js" />
+    <link rel="modulepreload" href="./src/scene.js" />
+    <link rel="modulepreload" href="./src/control.js" />
+    <link rel="modulepreload" href="./src/gestures.js" />
+    <link rel="modulepreload" href="./src/hands.js" />
+    <link rel="modulepreload" href="./src/filters.js" />
+    <link rel="modulepreload" href="./src/hud.js" />
+    <link rel="modulepreload" href="./src/audio.js" />
+    <link rel="modulepreload" href="./src/mouse.js" />
+    <link rel="modulepreload" href="./src/synthetic-hands.js" />
+    <link rel="modulepreload" href="./src/demo.js" />
+    <link rel="modulepreload" href="./src/merlin.js" />
+    <link rel="modulepreload" href="./src/cadkit.js" />
+    <link rel="modulepreload" href="./src/lines.js" />
+    <link rel="modulepreload" href="./vendor/three/three.core.min.js" />
+    <link rel="modulepreload" href="./vendor/three/three.module.min.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/EffectComposer.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/RenderPass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/UnrealBloomPass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/AfterimagePass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/OutputPass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/ShaderPass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/MaskPass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/Pass.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/shaders/CopyShader.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/shaders/LuminosityHighPassShader.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/shaders/OutputShader.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/shaders/AfterimageShader.js" />
+    <link rel="modulepreload" href="./vendor/three/addons/utils/BufferGeometryUtils.js" />
+  </head>
+  <body data-ui="full" class="booting">
+    <h1 class="sr-only">Merlin 1D hand control</h1>
+    <img id="poster" src="./poster.webp" alt="" aria-hidden="true" fetchpriority="high" />
+    <canvas id="gl" role="img" aria-label="Merlin 1D rocket engine model"></canvas>
+    <canvas id="hud" aria-hidden="true"></canvas>
+    <video id="cam" playsinline muted aria-hidden="true"></video>
+
+    <div class="dock" id="dock">
+      <p class="msg" id="cam-msg" role="alert" hidden></p>
+      <button id="btn-camera" class="cta" type="button">Enable camera</button>
+      <p class="sr-only" id="cam-status" aria-live="polite"></p>
+      <nav class="controls" id="controls" aria-label="Model controls">
+        <button type="button" class="ctl look-btn" data-act="look" data-look="wire" aria-label="Look: wireframe">Look<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></button>
+        <button type="button" class="ctl" data-act="explode" aria-pressed="false">Explode</button>
+        <button type="button" class="ctl" data-act="reset">Reset</button>
+        <button type="button" class="ctl help-btn" data-act="help" aria-label="Controls help" aria-expanded="false" aria-controls="help">?</button>
+      </nav>
+    </div>
+    <script>
+      // place the poster where the first frame will draw the engine: centered above the dock
+      (() => {
+        const p = document.getElementById('poster');
+        const q = new URLSearchParams(location.search);
+        if (q.get('mode') || q.get('poster') === '0') return p.remove();
+        const h = innerHeight;
+        const top = document.getElementById('dock').getBoundingClientRect().top;
+        const bare = q.get('ui') === 'model' || q.get('ui') === 'clean';
+        const reserve = bare ? 0 : Math.max(0, Math.min(h - top + 8, h * 0.3));
+        p.style.setProperty('--lift', `${reserve / 2}px`);
+      })();
+    </script>
+
+    <aside class="help" id="help" aria-label="Controls help" hidden>
+      <section>
+        <h2>Hands</h2>
+        <dl>
+          <div><dt>Open hand (active)</dt><dd>Move or tilt to rotate</dd></div>
+          <div><dt>Closed fist (inactive)</dt><dd>Disengage and reposition</dd></div>
+          <div><dt>Flick and close fist</dt><dd>Spin with momentum</dd></div>
+          <div><dt>Open hand on a spin</dt><dd>Catch</dd></div>
+          <div><dt>Two open hands</dt><dd>Zoom, move, roll</dd></div>
+        </dl>
+      </section>
+      <section id="help-mouse">
+        <h2>Mouse</h2>
+        <dl>
+          <div><dt>Drag</dt><dd>Turn</dd></div>
+          <div><dt>Flick and let go</dt><dd>Spin</dd></div>
+          <div><dt>Click a spin</dt><dd>Catch</dd></div>
+          <div><dt>Scroll</dt><dd>Zoom</dd></div>
+          <div><dt>Right-drag</dt><dd>Move</dd></div>
+        </dl>
+      </section>
+      <section id="help-touch" hidden>
+        <h2>Touch</h2>
+        <dl>
+          <div><dt>Drag</dt><dd>Turn</dd></div>
+          <div><dt>Flick and let go</dt><dd>Spin</dd></div>
+          <div><dt>Tap a spin</dt><dd>Catch</dd></div>
+          <div><dt>Pinch</dt><dd>Zoom</dd></div>
+          <div><dt>Two-finger drag</dt><dd>Move</dd></div>
+        </dl>
+      </section>
+      <section id="help-keys">
+        <h2>Keys</h2>
+        <dl>
+          <div><dt><kbd>C</kbd></dt><dd>Enable camera</dd></div>
+          <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Look</dd></div>
+          <div><dt><kbd>E</kbd></dt><dd>Explode</dd></div>
+          <div><dt><kbd>R</kbd></dt><dd>Reset</dd></div>
+          <div><dt><kbd>H</kbd></dt><dd>Hide overlays</dd></div>
+          <div><dt><kbd>M</kbd></dt><dd>Sound on or off</dd></div>
+          <div><dt><kbd>Space</kbd></dt><dd>Stop a spin</dd></div>
+        </dl>
+      </section>
+      <p class="note">Camera video stays on this device.</p>
+    </aside>
+
+    <pre class="debug" id="debug" hidden></pre>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
