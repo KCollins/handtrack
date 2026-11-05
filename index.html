@@ -10,16 +10,22 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://storage.googleapis.com" crossorigin />
     <link rel="preload" href="./poster.webp" as="image" fetchpriority="high" />
-    <link rel="preload" href="./fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- CDN Font Loading -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" />
     <link rel="stylesheet" href="./styles.css" />
+
+    <!-- CDN Import Map for Three.js -->
     <script type="importmap">
       {
         "imports": {
-              "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-              "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
         }
       }
     </script>
+
+    <!-- Custom Module Preloads -->
     <link rel="modulepreload" href="./src/main.js" />
     <link rel="modulepreload" href="./src/scene.js" />
     <link rel="modulepreload" href="./src/control.js" />
@@ -34,21 +40,22 @@
     <link rel="modulepreload" href="./src/merlin.js" />
     <link rel="modulepreload" href="./src/cadkit.js" />
     <link rel="modulepreload" href="./src/lines.js" />
-    <!-- <link rel="modulepreload" href="./vendor/three/three.core.min.js" />
-    <link rel="modulepreload" href="./vendor/three/three.module.min.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/EffectComposer.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/RenderPass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/UnrealBloomPass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/AfterimagePass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/OutputPass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/ShaderPass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/MaskPass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/postprocessing/Pass.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/shaders/CopyShader.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/shaders/LuminosityHighPassShader.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/shaders/OutputShader.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/shaders/AfterimageShader.js" />
-    <link rel="modulepreload" href="./vendor/three/addons/utils/BufferGeometryUtils.js" /> -->
+
+    <!-- CDN Three.js Module Preloads -->
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/RenderPass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/AfterimagePass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/OutputPass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/ShaderPass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/MaskPass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/Pass.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/CopyShader.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/LuminosityHighPassShader.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/OutputShader.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/AfterimageShader.js" />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/BufferGeometryUtils.js" />
   </head>
   <body data-ui="full" class="booting">
     <h1 class="sr-only">Merlin 1D hand control</h1>
@@ -69,7 +76,6 @@
       </nav>
     </div>
     <script>
-      // place the poster where the first frame will draw the engine: centered above the dock
       (() => {
         const p = document.getElementById('poster');
         const q = new URLSearchParams(location.search);
@@ -116,13 +122,13 @@
       <section id="help-keys">
         <h2>Keys</h2>
         <dl>
-          <div><dt><kbd>C</kbd></dt><dd>Enable camera</dd></div>
-          <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Look</dd></div>
-          <div><dt><kbd>E</kbd></dt><dd>Explode</dd></div>
-          <div><dt><kbd>R</kbd></dt><dd>Reset</dd></div>
-          <div><dt><kbd>H</kbd></dt><dd>Hide overlays</dd></div>
-          <div><dt><kbd>M</kbd></dt><dd>Sound on or off</dd></div>
-          <div><dt><kbd>Space</kbd></dt><dd>Stop a spin</dd></div>
+          <div><dt>C</dt><dd>Enable camera</dd></div>
+          <div><dt>1 2 3</dt><dd>Look</dd></div>
+          <div><dt>E</dt><dd>Explode</dd></div>
+          <div><dt>R</dt><dd>Reset</dd></div>
+          <div><dt>H</dt><dd>Hide overlays</dd></div>
+          <div><dt>M</dt><dd>Sound on or off</dd></div>
+          <div><dt>Space</dt><dd>Stop a spin</dd></div>
         </dl>
       </section>
       <p class="note">Camera video stays on this device.</p>
