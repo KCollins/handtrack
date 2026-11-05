@@ -65,15 +65,33 @@
     <video id="cam" playsinline muted aria-hidden="true"></video>
 
     <div class="dock" id="dock">
-      <p class="msg" id="cam-msg" role="alert" hidden></p>
-      <button id="btn-camera" class="cta" type="button">Enable camera</button>
-      <p class="sr-only" id="cam-status" aria-live="polite"></p>
+      <!-- <!-- <p class="msg" id="cam-msg" role="alert" hidden></p>
+      <button id="btn-camera" class="cta" type="button">Enable camera</button> -->
+      <!-- <p class="sr-only" id="cam-status" aria-live="polite"></p>
       <nav class="controls" id="controls" aria-label="Model controls">
         <button type="button" class="ctl look-btn" data-act="look" data-look="wire" aria-label="Look: wireframe">Look<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></button>
         <button type="button" class="ctl" data-act="explode" aria-pressed="false">Explode</button>
         <button type="button" class="ctl" data-act="reset">Reset</button>
         <button type="button" class="ctl help-btn" data-act="help" aria-label="Controls help" aria-expanded="false" aria-controls="help">?</button>
-      </nav>
+      </nav> --> -->
+      <!-- Inside <div class="dock" id="dock"> -->
+      
+      <!-- Model Selection & Upload Controls -->
+      <select id="preset-select" class="cta" style="background: #111e2e; color: #fff; border: 1px solid #334155;">
+        <option value="https://kcollins.github.io/chromadepth/25042_Perseverance.glb">Perseverance Rover</option>
+        <option value="https://kcollins.github.io/chromadepth/24584_Curiosity_static.glb">Curiosity Rover</option>
+        <option value="https://kcollins.github.io/chromadepth/3DBenchy.glb">3D Benchy</option>
+        <option value="https://kcollins.github.io/chromadepth/oceanographic_argo_profiling_float.glb">Argo Float</option>
+        <option value="https://kcollins.github.io/chromadepth/FERRITIN-1MFR.glb">Ferritin Protein</option>
+      </select>
+      
+      <label class="cta" style="cursor: pointer;">
+        Upload .GLB
+        <input type="file" id="glb-input" accept=".glb,.gltf" style="display:none;" />
+      </label>
+      
+      <!-- Update entry script to viewer-main.js -->
+      <script type="module" src="./src/viewer-main.js"></script>
     </div>
     <script>
       (() => {
