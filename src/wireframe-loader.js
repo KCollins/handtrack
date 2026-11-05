@@ -1,12 +1,14 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { scene } from './scene.js';
+import scene from './scene.js';
 
 const loader = new GLTFLoader();
 
 // Container added directly to the main Three.js scene
 export const modelGroup = new THREE.Group();
-scene.add(modelGroup);
+if (scene && typeof scene.add === 'function') {
+  scene.add(modelGroup);
+}
 
 /**
  * Loads a GLTF/GLB model from URL or File Blob, normalizes scale/center,
