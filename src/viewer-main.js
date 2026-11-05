@@ -4,7 +4,7 @@ import './main.js'; // Initializes webcam, gesture processing, and main animatio
 const presetSelect = document.getElementById('preset-select');
 const fileInput = document.getElementById('glb-input');
 
-// Handle preset dropdown menu changes
+// Handle preset selection changes
 if (presetSelect) {
   presetSelect.addEventListener('change', (e) => {
     if (e.target.value) {
@@ -13,7 +13,7 @@ if (presetSelect) {
   });
 }
 
-// Handle custom .glb / .gltf file uploads
+// Handle local .glb / .gltf file uploads
 if (fileInput) {
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -23,7 +23,7 @@ if (fileInput) {
   });
 }
 
-// Load default initial preset on launch
+// Load default initial preset on startup
 if (presetSelect && presetSelect.value) {
   loadModelWithWireframe(presetSelect.value);
 }
